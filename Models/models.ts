@@ -1,12 +1,21 @@
 import { ObjectId } from 'mongodb';
 
+/** Subject Schema */
+export interface subject {
+	subjectCode: string;
+	subjectName: string;
+	regulation: string;
+	yearOfStudy: number;
+	semester: number;
+	branch: string;
+}
+
 /** Assignment Schema */
 interface subAssignment {
-	subjectName: string;
-	assignmentNo: number;
+	subjectCode: string; //ref
 	deadLine: Date;
 	description: string;
-	submittedStudents: ObjectId[];
+	submittedStudents: ObjectId[]; //ref
 }
 
 export interface assignment {
@@ -42,6 +51,7 @@ export interface faculty {
 	mobileNo: number | string;
 	branch: string;
 	empCode: string;
+	teachingSubjects: { subjectCode: string; section: string }[]; //ref
 }
 export interface student {
 	userType: 'student';

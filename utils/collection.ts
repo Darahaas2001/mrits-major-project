@@ -3,4 +3,5 @@ export const collection = {
 	faculty: 'faculty',
 	attendance: 'attendance',
 	assignment: 'assignment',
+	subject: 'subjects',
 };
