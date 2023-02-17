@@ -40,9 +40,10 @@ interface Attendance {
 	noWorkingDays: number;
 	absent: Date[];
 }
-export enum userType {
-	'admin',
-	'faculty',
+export interface userType {
+	admin: 'admin';
+	faculty: 'faculty';
+	student: 'student';
 }
 
 export interface faculty {

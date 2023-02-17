@@ -17,11 +17,11 @@ export default {
 		args: string[]
 	) => {
 		try {
+			let dataObj: subject | any = {};
 			let userData = await db
 				.collection<faculty>(collection.faculty)
 				.findOne({ mobileNo: (message.author as string).split('@')[0] });
 			if (userData) {
-				let dataObj: subject;
 				let listSpec = [
 					{
 						title: 'Enter the branch',
@@ -35,9 +35,11 @@ export default {
 				let list = new List('Select the branch', 'next', listSpec);
 				client.sendMessage(message.from, list);
 				const eventHandler1 = async (message: WAWebJS.Message) => {
-					if (!message.selectedRowId)
-						client.removeListener('message', eventHandler1);
-					dataObj.branch = message.selectedRowId?.toUpperCase()!;
+					if (!message.selectedRowId) {
+						return client.removeListener('message', eventHandler1);
+					}
+					console.log(message.selectedRowId);
+					dataObj.branch = message.selectedRowId.toUpperCase();
 					let listSpec = [
 						{
 							title: 'Enter the Regulation',

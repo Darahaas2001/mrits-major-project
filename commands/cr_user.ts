@@ -44,10 +44,10 @@ export default {
 			let eventHandler1 = async (message: WAWebJS.Message) => {
 				switch (message.selectedButtonId) {
 					case 'admin':
-						userObj['userType'] = userType.admin;
+						userObj['userType'] = 'admin';
 						break;
 					case 'faculty':
-						userObj['userType'] = userType.faculty;
+						userObj['userType'] = 'faculty';
 						break;
 
 					default:
@@ -71,29 +71,25 @@ export default {
 			};
 			const eventHandler2 = async (message: WAWebJS.Message) => {
 				if (message.selectedButtonId) userObj.branch = message.selectedButtonId;
-				if (
-					userObj.userType == userType.admin ||
-					userObj.userType == userType.faculty
-				) {
+				if (userObj.userType == 'admin' || userObj.userType == 'faculty') {
 					client.sendMessage(message.from, 'Please enter your employee number');
 
 					client.removeListener('message', eventHandler2);
+					client.on('message', eventHandler3);
 				} else if (userObj.userType === 'student') {
 					client.sendMessage(message.from, 'Please enter your roll number');
-					client.on('message', eventHandler3);
 					client.removeListener('message', eventHandler2);
+					client.on('message', eventHandler3);
 				}
 				client.removeListener('message', eventHandler2);
 			};
 
 			const eventHandler3 = async (message: WAWebJS.Message) => {
-				if (
-					userObj.userType == userType.faculty ||
-					userObj.userType == userType.admin
-				) {
+				if (userObj.userType == 'admin' || userObj.userType == 'faculty') {
 					userObj.empCode = message.body.toUpperCase();
-
+					console.log('Im in handler 3');
 					await db.collection<faculty>(collection.faculty).insertOne(userObj);
+					client.sendMessage(message.from, 'User created Successfully');
 					client.removeListener('message', eventHandler3);
 				} else if (userObj.userType == 'student') {
 					userObj.rollNo = message.body.toUpperCase();
