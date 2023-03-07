@@ -11,11 +11,17 @@ export interface subject {
 }
 
 /** Assignment Schema */
-interface subAssignment {
+
+export interface submittedStudents {
+	studentId: ObjectId; //ref
+	assignmentData: string;
+	dateOfSubmission: Date;
+}
+export interface subAssignment {
 	subjectCode: string; //ref
 	deadLine: Date;
 	description: string;
-	submittedStudents: ObjectId[]; //ref
+	submittedStudents: Partial<submittedStudents>[];
 }
 
 export interface assignment {
@@ -52,7 +58,7 @@ export interface faculty {
 	mobileNo: number | string;
 	branch: string;
 	empCode: string;
-	teachingSubjects: { subjectCode: string; section: string }[]; //ref
+	teachingSubjects: { subjectCode: string; section: string[] }[]; //ref
 }
 export interface student {
 	userType: 'student';

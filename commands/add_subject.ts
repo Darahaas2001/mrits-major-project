@@ -39,7 +39,7 @@ export default {
 						return client.removeListener('message', eventHandler1);
 					}
 					console.log(message.selectedRowId);
-					dataObj.branch = message.selectedRowId.toUpperCase();
+					dataObj.branch = message.selectedRowId;
 					let listSpec = [
 						{
 							title: 'Enter the Regulation',

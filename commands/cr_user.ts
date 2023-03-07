@@ -3,7 +3,7 @@ import { Buttons, List } from 'whatsapp-web.js';
 // import User from '../Models/user.model';
 import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
-import { faculty, student, userType } from '../Models/models';
+import { faculty, student, subject, userType } from '../Models/models';
 import { collection } from '../utils/collection';
 
 export default {
@@ -87,10 +87,14 @@ export default {
 			const eventHandler3 = async (message: WAWebJS.Message) => {
 				if (userObj.userType == 'admin' || userObj.userType == 'faculty') {
 					userObj.empCode = message.body.toUpperCase();
-					console.log('Im in handler 3');
-					await db.collection<faculty>(collection.faculty).insertOne(userObj);
-					client.sendMessage(message.from, 'User created Successfully');
+
+					//	await db.collection<faculty>(collection.faculty).insertOne(userObj);
+					client.sendMessage(
+						message.from,
+						'Please enter the subject you are teaching in the following format \n\n *<subject_code>[<section>,<section>,<section>],<subject_code>[<section>,<section>,<section>]*\n\n `Ex: 157AB[A,B] 159CV[C]`'
+					);
 					client.removeListener('message', eventHandler3);
+					client.on('message', teachingSubjectsHandler);
 				} else if (userObj.userType == 'student') {
 					userObj.rollNo = message.body.toUpperCase();
 					client.removeListener('message', eventHandler3);
@@ -122,7 +126,33 @@ export default {
 				}
 				client.removeListener('message', eventHandler3);
 			};
-
+			const teachingSubjectsHandler = async (message: WAWebJS.Message) => {
+				let msgData = message.body;
+				let regexp = new RegExp(/([^[]+(?=]))/, 'g');
+				userObj.teachingSubjects = [];
+				for (const msgs of msgData.split(' ')) {
+					let section = msgs.match(regexp)?.pop() as string;
+					let subCode = msgs.split('[')[0];
+					let subData = await db
+						.collection<subject>(collection.subject)
+						.findOne({ subjectCode: subCode });
+					if (!subData) {
+						await client.sendMessage(
+							message.from,
+							`The subject code *${subCode}* is not found in subject database`
+						);
+						client.removeListener('message', teachingSubjectsHandler);
+						return;
+					}
+					userObj.teachingSubjects.push({
+						subjectCode: subCode,
+						section: section.split(','),
+					});
+				}
+				await db.collection<faculty>(collection.faculty).insertOne(userObj);
+				await client.sendMessage(message.from, 'User created successfully');
+				client.removeListener('message', teachingSubjectsHandler);
+			};
 			const eventHandler4 = async (message: WAWebJS.Message) => {
 				if (message.selectedRowId) userObj.yearOfStudy = message.selectedRowId;
 				let buttonSpec = [{ id: '1', body: 'I' }, { id: '2', body: 'II' }, ,];

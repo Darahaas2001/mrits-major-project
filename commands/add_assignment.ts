@@ -3,7 +3,13 @@ import WAWebJS, { List } from 'whatsapp-web.js';
 import { db } from '../utils/db';
 import { fail } from '../utils/chalk';
 import { collection } from '../utils/collection';
-import { assignment, faculty, student, subject } from '../Models/models';
+import {
+	assignment,
+	faculty,
+	student,
+	subAssignment,
+	subject,
+} from '../Models/models';
 
 import moment from 'moment';
 
@@ -19,27 +25,23 @@ export default {
 		args: string[]
 	) => {
 		try {
-			let dataObj: assignment;
-			let userData = await db.collection<student>(collection.student).findOne({
+			let dataObj: assignment = Object.create({});
+			let userData = await db.collection<faculty>(collection.faculty).findOne({
 				mobileNo: (message.author as string).split('@')[0],
 			});
 			// let userData = await User.findOne({
 			// 	mobileNo: (message.author as string).split('@')[0],
 			// });
 
-			if (userData && userData.userType !== 'student') {
-				let facultyData = await db
-					.collection<faculty>(collection.faculty)
-					.findOne({
-						mobileNo: (message.author as string).split('@')[0],
-					});
+			if (userData) {
+				let facultyData = userData;
 				let listSpec: any[] = [{ title: 'Select Subject', rows: [] }];
 				for (const subject of facultyData?.teachingSubjects!) {
 					let subName = await db
 						.collection<subject>(collection.subject)
 						.findOne({ subjectCode: subject.subjectCode });
 					listSpec[0].rows.push({
-						id: subName?.subjectCode.toLowerCase(),
+						id: subName?.subjectCode,
 						title: subName?.subjectName.toUpperCase(),
 					});
 				}
@@ -57,14 +59,20 @@ export default {
 					let subjectData = await db
 						.collection<subject>(collection.subject)
 						.findOne({ subjectCode: message.selectedRowId });
+
 					let section = facultyData?.teachingSubjects.filter(
 						(obj) => obj.subjectCode === message.selectedRowId
 					)!;
+
 					dataObj.yearOfStudy = subjectData?.yearOfStudy!;
 					dataObj.semester = subjectData?.semester!;
 					dataObj.branch = subjectData?.branch!;
-					dataObj.section = section[0].section;
+					dataObj.section = section[0].section[0];
+					dataObj.assignment = [];
+					dataObj.assignment.push(Object.create({}));
 					dataObj.assignment[0].subjectCode = subjectData?.subjectCode!;
+
+					//dataObj.assignment[0].subjectCode = subjectData?.subjectCode!;
 					client.removeListener('message', eventHandler1);
 					client.sendMessage(
 						message.from,
@@ -74,17 +82,25 @@ export default {
 					client.on('message', eventHandler2);
 				};
 				const eventHandler2 = async (message: WAWebJS.Message) => {
-					if (!moment(message.body).toDate())
-						client.removeListener('message', eventHandler2);
-					dataObj.assignment[0].deadLine = moment(message.body).toDate();
+					if (!moment(message.body, 'DD-MM-YYYY', false).toDate()) {
+						client.sendMessage(message.from, 'Invalid date format');
+						return client.removeListener('message', eventHandler2);
+					}
+					dataObj.assignment[0].deadLine = moment(
+						message.body,
+						'DD-MM-YYYY',
+						false
+					).toDate();
+					client.sendMessage(message.from, 'Enter the assignment description');
 					client.removeListener('message', eventHandler2);
 					client.on('message', eventHandler3);
 				};
 
 				const eventHandler3 = async (message: WAWebJS.Message) => {
 					if (!message.body) client.removeListener('message', eventHandler3);
+
 					dataObj.assignment[0].description = message.body;
-					client.removeListener('message', eventHandler2);
+					client.removeListener('message', eventHandler3);
 					let assignmentData = await db
 						.collection<assignment>(collection.assignment)
 						.findOne({
