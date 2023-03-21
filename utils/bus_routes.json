@@ -1,0 +1,98 @@
+[
+	{
+		"busNo": 6281,
+		"driverName": "Mohammad Hussain",
+		"routes": [
+			"Kothapet",
+			"Dilsukhnagar",
+			"Malakpet",
+			"Chaderghat",
+			"Koti",
+			"Narayanguda",
+			"Himayath Nagar",
+			"Liberty",
+			"Tank Bund",
+			"Paradise",
+			"MRITS"
+		],
+		"phoneNo": 8186999014
+	},
+	{
+		"busNo": 2138,
+		"driverName": "Lingam",
+		"routes": [
+			"Dammaiguda",
+			"Saket",
+			"Radhika X Roads",
+			"Sharada Theatre",
+			"Sainikpuri",
+			"Bhavans",
+			"Yapral",
+			"Kowkoor",
+			"Bolarum",
+			"Kompally",
+			"MRITS"
+		],
+		"phoneNo": 6305322375
+	},
+	{
+		"busNo": 6133,
+		"driverName": "Sagar",
+		"routes": ["M.P", "Paradise"],
+		"phoneNo": 9087543216
+	},
+	{
+		"busNo": 5570,
+		"driverName": "Madhan",
+		"routes": ["Uppal", "Sithaphal mandi"],
+		"phoneNo": 6399078654
+	},
+	{
+		"busNo": 5079,
+		"driverName": "Srikanth",
+		"routes": ["Padmaraonagar", "Dairy Forum"],
+		"phoneNo": 8906573214
+	},
+	{
+		"busNo": 3249,
+		"driverName": "Mohan",
+		"routes": ["MLKG", "Alwaal"],
+		"phoneNo": 7689543201
+	},
+	{
+		"busNo": 4122,
+		"driverName": "Govardhan",
+		"routes": ["ECIL", "Yaapraal"],
+		"phoneNo": 6578943021
+	},
+	{
+		"busNo": 2547,
+		"driverName": "Santhosh",
+		"routes": ["Kondapur", "Pragathi Nagar"],
+		"phoneNo": 9876054321
+	},
+	{
+		"busNo": 3266,
+		"driverName": "Mohammad Suleman",
+		"routes": ["KPHB", "Nizampet"],
+		"phoneNo": 6300440066
+	},
+	{
+		"busNo": 5369,
+		"driverName": "Dinesh",
+		"routes": ["Madhapur", "Motinagar"],
+		"phoneNo": 9667788004
+	},
+	{
+		"busNo": 5685,
+		"driverName": "Durga Rao",
+		"routes": ["AMPT", "Balanagar"],
+		"phoneNo": 7765432890
+	},
+	{
+		"busNo": 4119,
+		"driverName": "Jagadish",
+		"routes": ["Jagatgiri Gutta", "Shaapur", "Suraram"],
+		"phoneNo": 8905436721
+	}
+]

@@ -93,9 +93,7 @@ export default {
 								section: userData.section.toUpperCase(),
 								semester: +userData.semester,
 							});
-
-						let activeAssignments: string =
-							'*The list of active assignments are*';
+						let activeAssignment = '*The list of active assignments are*';
 						if (assignmentData) {
 							for (const asgnmt of assignmentData?.assignment) {
 								let difference = moment(asgnmt.deadLine).diff(
@@ -103,11 +101,12 @@ export default {
 									'days'
 								);
 
-								if (difference >= 1) {
+								if (difference >= 0) {
 									let subData = await db
 										.collection<subject>(collection.subject)
 										.findOne({ subjectCode: asgnmt.subjectCode });
-									activeAssignments += `\n ${subData?.subjectName} (${moment(
+
+									activeAssignment += `\n ${subData?.subjectName} (${moment(
 										asgnmt.deadLine
 									).format('dddd-MMM-YYYY')})`;
 								}
@@ -115,7 +114,7 @@ export default {
 						}
 						client.removeListener('message', eventHandler1);
 
-						await client.sendMessage(message.from, activeAssignments);
+						await client.sendMessage(message.from, activeAssignment);
 					}
 				} else if (message.selectedRowId === 'submit') {
 					let userData = await db

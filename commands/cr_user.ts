@@ -1,6 +1,5 @@
 import WAWebJS from 'whatsapp-web.js';
 import { Buttons, List } from 'whatsapp-web.js';
-// import User from '../Models/user.model';
 import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
 import { faculty, student, subject, userType } from '../Models/models';
@@ -155,7 +154,10 @@ export default {
 			};
 			const eventHandler4 = async (message: WAWebJS.Message) => {
 				if (message.selectedRowId) userObj.yearOfStudy = message.selectedRowId;
-				let buttonSpec = [{ id: '1', body: 'I' }, { id: '2', body: 'II' }, ,];
+				let buttonSpec = [
+					{ id: '1', body: 'I' },
+					{ id: '2', body: 'II' },
+				];
 				const buttons = new Buttons(
 					'Please select any one option',
 					buttonSpec,

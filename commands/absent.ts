@@ -3,7 +3,7 @@ import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
 // import User from '../Models/user.model';
 import moment from 'moment';
-import { student, userType } from '../Models/models';
+import { student, faculty } from '../Models/models';
 import { collection } from '../utils/collection';
 
 export default {
@@ -19,14 +19,14 @@ export default {
 	) => {
 		try {
 			let userData = await db
-				.collection<student>(collection.student)
+				.collection<faculty>(collection.faculty)
 				.findOne({ mobileNo: (message.author as string).split('@')[0] });
 
 			// let userData = await User.findOne({
 			// 	mobileNo: (message.author as string).split('@')[0],
 			// });
 
-			if (userData !== null && userData.userType !== 'student') {
+			if (userData) {
 				for (const rollNo of args) {
 					let student = await db
 						.collection<student>(collection.student)
