@@ -55,14 +55,14 @@ export default {
 						},
 					])
 					.toArray();
-				console.log(avg);
+
 				let requiredArr = avg.filter(
 					(data: any) =>
 						data._id.yearOfStudy === userData?.yearOfStudy &&
 						data._id.branch === userData?.branch &&
 						data._id.semester === userData?.semester
 				);
-				console.log(requiredArr);
+
 				let averageAttendance =
 					userData.attendance.noWorkingDays - requiredArr[0].avg;
 
@@ -88,9 +88,12 @@ export default {
 					'image/png',
 					Buffer.from(chartBin).toString('base64')
 				);
-				console.log(media);
 				client.sendMessage(message.from, media, {
-					caption: `🌟 *Name*: ${userData.name}\n🌟 *Branch*: ${userData.branch}\n🌟 *Year*: ${userData.yearOfStudy}\n🌟 *Section*: ${userData.section}`,
+					caption: `🌟 *Name*: ${
+						userData.name
+					}\n🌟 *Branch*: ${userData.branch.toUpperCase()}\n🌟 *Year*: ${
+						userData.yearOfStudy
+					}\n🌟 *Section*: ${userData.section}`,
 				});
 			} else {
 				client.sendMessage(message.from, 'User not found or not a student');

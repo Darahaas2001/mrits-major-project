@@ -49,11 +49,10 @@ interface Attendance {
 export interface userType {
 	admin: 'admin';
 	faculty: 'faculty';
-	student: 'student';
 }
 
 export interface faculty {
-	userType: userType;
+	userType: 'admin' | 'faculty';
 	name: string;
 	mobileNo: number | string;
 	branch: string;
