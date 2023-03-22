@@ -71,3 +71,4 @@ export interface student {
 	branch: string;
 	section: string;
 }
+
