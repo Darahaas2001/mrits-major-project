@@ -18,7 +18,8 @@ export default {
 	type: 'admin',
 	description: 'Creates a new assignment for students',
 	usage:
-		'!add_assignment ||<branch>||<year>||<semester>||<section>||<subject name>||<assignment no>||<deadline>||<description>\n\t Ex: !add_assignment ||IT||4||1||A||RS&GIS||1||10-10-2022||Remote Sensing assignment 1',
+		//'!add_assignment ||<branch>||<year>||<semester>||<section>||<subject name>||<assignment no>||<deadline>||<description>\n\t Ex: !add_assignment ||IT||4||1||A||RS&GIS||1||10-10-2022||Remote Sensing assignment 1',
+		'!add_assignment\n\tAdmin needs to select(or)enter the necessary information as instructed. \n\t1.Select your subject of teaching\n\t2.Please enter the assignment deadline in dd/mm/yyyy\n\t3.Enter the assignment description\n\t4.Finally, you are prompted with the message -\n\t  "Assignment has been added successfully"',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,

@@ -10,7 +10,7 @@ export default {
 	name: 'add_subject',
 	type: 'admin',
 	description: 'Creates new subject',
-	usage: '!add_subject ',
+	usage: '!add_subject\n\tAdmin needs to select(or)enter the necessary information as instructed. \n\t1.Select the Branch\n\t2.Select the Regulation\n\t3.Select the Year\n\t4.Select the Semester\n\t5.Please enter the subject code as per JNTU-H\n\t6.Please enter the subject name as per JNTU-H\n\t7.Finally, you are prompted with the message -\n\t  "Subject has been added successfully."',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,
@@ -24,7 +24,7 @@ export default {
 			if (userData) {
 				let listSpec = [
 					{
-						title: 'Enter the branch',
+						title: 'Select the Branch',
 						rows: [
 							{ id: 'cse', title: 'CSE' },
 							{ id: 'it', title: 'IT' },
@@ -32,7 +32,7 @@ export default {
 						],
 					},
 				];
-				let list = new List('Select the branch', 'next', listSpec);
+				let list = new List('Select the Branch', 'next', listSpec);
 				client.sendMessage(message.from, list);
 				const eventHandler1 = async (message: WAWebJS.Message) => {
 					if (!message.selectedRowId) {
@@ -42,7 +42,7 @@ export default {
 					dataObj.branch = message.selectedRowId;
 					let listSpec = [
 						{
-							title: 'Enter the Regulation',
+							title: 'Select the Regulation',
 							rows: [
 								{ id: 'r18', title: 'R-18' },
 								{ id: 'r20', title: 'R-20' },
@@ -50,7 +50,7 @@ export default {
 							],
 						},
 					];
-					let list = new List('Select the regulation', 'next', listSpec);
+					let list = new List('Select the Regulation', 'next', listSpec);
 					client.sendMessage(message.from, list);
 					client.removeListener('message', eventHandler1);
 					client.on('message', eventHandler2);
@@ -62,7 +62,7 @@ export default {
 					dataObj.regulation = message.selectedRowId;
 					let listSpec = [
 						{
-							title: 'Enter the Year',
+							title: 'Select the Year',
 							rows: [
 								{ id: '1', title: 'I' },
 								{ id: '2', title: 'II' },
@@ -71,7 +71,7 @@ export default {
 							],
 						},
 					];
-					let list = new List('Select the year', 'next', listSpec);
+					let list = new List('Select the Year', 'next', listSpec);
 					client.sendMessage(message.from, list);
 					client.removeListener('message', eventHandler2);
 					client.on('message', eventHandler3);
@@ -83,14 +83,14 @@ export default {
 					dataObj.yearOfStudy = parseInt(message.selectedRowId);
 					let listSpec = [
 						{
-							title: 'Enter the semester',
+							title: 'Select the Semester',
 							rows: [
 								{ id: '1', title: 'I' },
 								{ id: '2', title: 'II' },
 							],
 						},
 					];
-					let list = new List('Select the semester', 'next', listSpec);
+					let list = new List('Select the Semester', 'next', listSpec);
 					client.sendMessage(message.from, list);
 					client.removeListener('message', eventHandler3);
 					client.on('message', eventHandler4);
@@ -125,7 +125,7 @@ export default {
 					await db.collection<subject>(collection.subject).insertOne(dataObj);
 					client.sendMessage(
 						message.from,
-						'Subject has been added successfully'
+						'Subject has been added successfully.'
 					);
 				};
 				client.on('message', eventHandler1);

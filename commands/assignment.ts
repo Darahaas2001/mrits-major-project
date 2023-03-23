@@ -16,8 +16,9 @@ import { ObjectId } from 'mongodb';
 export default {
 	name: 'assignment',
 	type: 'user',
-	description: 'Lists assignments and submits assignments',
-	usage: '!assignment',
+	// description: 'Displays a button interface, which consists of options such as "List assignments", "Submit assignments", etc.',
+	description: 'Lists assignment related options',
+	usage: '!assignment \n\t And then select the approprite option.',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,

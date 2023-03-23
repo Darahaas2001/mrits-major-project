@@ -10,7 +10,8 @@ export default {
 	type: 'admin',
 	description: 'Creates new user',
 	usage:
-		'!cr_user [<@mention> || <name> ] - select the role(buttons) \n\t Ex: !cr_user @mandeep ||Mandeep Andey||student||19S11A1218||4||1||IT',
+		//'!cr_user [<@mention> || <name> ] - select the role(buttons) \n\t Ex: !cr_user @mandeep ||Mandeep Andey||student||19S11A1218||4||1||IT',
+		'!cr_user @mention || name\n\tEx: !cr_user @mandeep||Mandeep Andey \n\t1.Now, the admin needs to select the user Designation.\n\t2.Next, Admin needs to select(or)enter the appropirate information as instructed.\n\t3.Finally, you are prompted with the message -\n\t  "User created successfully."',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,
