@@ -1,8 +1,9 @@
 import WAWebJS from 'whatsapp-web.js';
-import { Buttons, List } from 'whatsapp-web.js';
 import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
-import { faculty, student, subject, userType } from '../Models/models';
+import { tableConfig, tableData } from '../utils/table';
+import { TableUserConfig } from 'table';
+import { faculty, student, subject } from '../Models/models';
 import { collection } from '../utils/collection';
 
 export default {
@@ -21,56 +22,106 @@ export default {
 			// let userData = await db.collection<student>('user').findOne({
 			// 	mobileNo: (message.author as string).split('@')[0],
 			// });
+			let usrObj: any = { author: message.author };
 			let userObj: any = {
 				name: message.body.split('||').pop(),
 				mobileNo: (message.mentionedIds as Array<string>)[0].split('@')[0],
 			};
 
-			let buttonSpec = [
-				{ id: 'admin', body: 'HOD' },
-				{ id: 'faculty', body: 'Faculty' },
-				{ id: 'student', body: 'Student' },
+			let data = [
+				['1', 'HOD'],
+				['2', 'Faculty'],
+				['3', 'Student'],
 			];
 
-			const buttons = new Buttons(
-				'Please select any one option',
-				buttonSpec,
-				'Creating User'
-			);
+			// let buttonSpec = [
+			// 	{ id: 'admin', body: 'HOD' },
+			// 	{ id: 'faculty', body: 'Faculty' },
+			// 	{ id: 'student', body: 'Student' },
+			// ];
 
-			await client.sendMessage(message.from, buttons);
+			// const buttons = new Buttons(
+			// 	'Please select any one option',
+			// 	buttonSpec,
+			// 	'Creating User'
+			// );
+			let config: TableUserConfig = {
+				...tableConfig,
+				header: {
+					content: '*Please select the type*\n',
+					wrapWord: true,
+					alignment: 'left',
+				},
+			};
+			let msg = tableData(data, config);
+
+			await client.sendMessage(message.from, msg);
 
 			// Event Handlers
 			let eventHandler1 = async (message: WAWebJS.Message) => {
-				switch (message.selectedButtonId) {
-					case 'admin':
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				switch (message.body) {
+					case '1':
 						userObj['userType'] = 'admin';
 						break;
-					case 'faculty':
+					case '2':
 						userObj['userType'] = 'faculty';
 						break;
-
-					default:
+					case '3':
 						userObj['userType'] = 'student';
+						break;
+					default:
+						client.sendMessage(message.from, 'Option invalid');
+						client.removeListener('message', eventHandler1);
 						break;
 				}
 
-				let buttonSpec = [
-					{ id: 'cse', body: 'CSE' },
-					{ id: 'ece', body: 'ECE' },
-					{ id: 'it', body: 'IT' },
+				let data = [
+					['1', 'CSE'],
+					['2', 'IT'],
+					['3', 'ECE'],
 				];
-				const buttons = new Buttons(
-					'Please select any one option',
-					buttonSpec,
-					'Creating User'
-				);
-				await client.sendMessage(message.from, buttons);
+				// const buttons = new Buttons(
+				// 	'Please select any one option',
+				// 	buttonSpec,
+				// 	'Creating User'
+				// );
+				let config: TableUserConfig = {
+					...tableConfig,
+					header: {
+						content: '*Please select the department*\n',
+						wrapWord: true,
+						alignment: 'left',
+					},
+				};
+				let msg = tableData(data, config);
+
+				await client.sendMessage(message.from, msg);
+				// await client.sendMessage(message.from, buttons);
 				client.on('message', eventHandler2);
 				client.removeListener('message', eventHandler1);
 			};
 			const eventHandler2 = async (message: WAWebJS.Message) => {
-				if (message.selectedButtonId) userObj.branch = message.selectedButtonId;
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				switch (message.body) {
+					case '1':
+						userObj['branch'] = 'cse';
+						break;
+					case '2':
+						userObj['branch'] = 'it';
+						break;
+					case '3':
+						userObj['branch'] = 'ece';
+						break;
+					default:
+						client.sendMessage(message.from, 'Option invalid');
+						//client.removeListener('message',eventHandler2)
+						break;
+				}
+
+				// if (message.selectedButtonId) userObj.branch = message.selectedButtonId;
 				if (userObj.userType == 'admin' || userObj.userType == 'faculty') {
 					client.sendMessage(message.from, 'Please enter your employee number');
 
@@ -85,6 +136,8 @@ export default {
 			};
 
 			const eventHandler3 = async (message: WAWebJS.Message) => {
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
 				if (userObj.userType == 'admin' || userObj.userType == 'faculty') {
 					userObj.empCode = message.body.toUpperCase();
 
@@ -98,18 +151,36 @@ export default {
 				} else if (userObj.userType == 'student') {
 					userObj.rollNo = message.body.toUpperCase();
 					client.removeListener('message', eventHandler3);
-					let listSpec = [
-						{
-							title: 'Enter Year',
-							rows: [
-								{ id: '1', title: 'I' },
-								{ id: '2', title: 'II' },
-								{ id: '3', title: 'III' },
-								{ id: '4', title: 'IV' },
-							],
-						},
+
+					let data = [
+						['1', 'I Year'],
+						['2', 'II Year'],
+						['3', 'III Year'],
+						['4', 'IV Year'],
 					];
-					let list = new List('Select your year of study', 'next', listSpec);
+					let config: TableUserConfig = {
+						...tableConfig,
+						header: {
+							content: '*Please select the year of Studying*\n',
+							wrapWord: true,
+							alignment: 'left',
+						},
+					};
+					let msg = tableData(data, config);
+
+					await client.sendMessage(message.from, msg);
+					// let listSpec = [
+					// 	{
+					// 		title: 'Enter Year',
+					// 		rows: [
+					// 			{ id: '1', title: 'I' },
+					// 			{ id: '2', title: 'II' },
+					// 			{ id: '3', title: 'III' },
+					// 			{ id: '4', title: 'IV' },
+					// 		],
+					// 	},
+					// ];
+					//let list = new List('Select your year of study', 'next', listSpec);
 					// let buttonSpec = [
 					// 	{ id: '1', body: 'I' },
 					// 	{ id: '2', body: 'II' },
@@ -121,7 +192,7 @@ export default {
 					// 	buttonSpec,
 					// 	'Enter year of study'
 					// );
-					await client.sendMessage(message.from, list);
+					//	await client.sendMessage(message.from, list);
 					client.on('message', eventHandler4);
 				}
 				client.removeListener('message', eventHandler3);
@@ -154,54 +225,121 @@ export default {
 				client.removeListener('message', teachingSubjectsHandler);
 			};
 			const eventHandler4 = async (message: WAWebJS.Message) => {
-				if (message.selectedRowId) userObj.yearOfStudy = message.selectedRowId;
-				let buttonSpec = [
-					{ id: '1', body: 'I' },
-					{ id: '2', body: 'II' },
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+
+				if (parseInt(message.body) > 0 && parseInt(message.body) <= 4) {
+					userObj['yearOfStudy'] = message.body;
+				} else {
+					return await client.sendMessage(message.from, 'Option Invalid');
+				}
+
+				//	if (message.selectedRowId) userObj.yearOfStudy = message.selectedRowId;
+				// let buttonSpec = [
+				// 	{ id: '1', body: 'I' },
+				// 	{ id: '2', body: 'II' },
+				// ];
+
+				let data = [
+					['1', 'I'],
+					['2', 'II'],
 				];
-				const buttons = new Buttons(
-					'Please select any one option',
-					buttonSpec,
-					'Enter Semester of study'
-				);
-				await client.sendMessage(message.from, buttons);
+				let config: TableUserConfig = {
+					...tableConfig,
+					header: {
+						content: '*Please select the semester of study*\n',
+						wrapWord: true,
+						alignment: 'left',
+					},
+				};
+				let msg = tableData(data, config);
+
+				await client.sendMessage(message.from, msg);
+
+				// const buttons = new Buttons(
+				// 	'Please select any one option',
+				// 	buttonSpec,
+				// 	'Enter Semester of study'
+				// );
+				// await client.sendMessage(message.from, buttons);
 				client.on('message', eventHandler5);
 				client.removeListener('message', eventHandler4);
 			};
 			const eventHandler5 = async (message: WAWebJS.Message) => {
-				if (message.selectedButtonId)
-					userObj.semester = message.selectedButtonId;
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				if (parseInt(message.body) > 0 && parseInt(message.body) <= 2) {
+					userObj['semester'] = message.body;
+				} else {
+					return await client.sendMessage(message.from, 'Option Invalid');
+				}
 
-				let listSpec = [
-					{
-						title: 'Enter section',
-						rows: [
-							{ id: 'a', title: 'A' },
-							{ id: 'b', title: 'B' },
-							{ id: 'c', title: 'C' },
-							{ id: 'd', title: 'D' },
-						],
-					},
-				];
-				let list = new List('Select your section', 'next', listSpec);
-				// let buttonSpec = [
-				// 	{ id: 'a', body: 'A' },
-				// 	{ id: 'b', body: 'B' },
-				// 	{ id: 'c', body: 'C' },
-				// 	{ id: 'd', body: 'D' },
+				// let listSpec = [
+				// 	{
+				// 		title: 'Enter section',
+				// 		rows: [
+				// 			{ id: 'a', title: 'A' },
+				// 			{ id: 'b', title: 'B' },
+				// 			{ id: 'c', title: 'C' },
+				// 			{ id: 'd', title: 'D' },
+				// 		],
+				// 	},
 				// ];
-				// const buttons = new Buttons(
-				// 	'Please select your section',
-				// 	buttonSpec,
-				// 	'Creating User'
-				// );
-				await client.sendMessage(message.from, list);
+				// let list = new List('Select your section', 'next', listSpec);
+				// // let buttonSpec = [
+				// // 	{ id: 'a', body: 'A' },
+				// // 	{ id: 'b', body: 'B' },
+				// // 	{ id: 'c', body: 'C' },
+				// // 	{ id: 'd', body: 'D' },
+				// // ];
+				// // const buttons = new Buttons(
+				// // 	'Please select your section',
+				// // 	buttonSpec,
+				// // 	'Creating User'
+				// // );
+				// await client.sendMessage(message.from, list);
+				let data = [
+					['1', 'A'],
+					['2', 'B'],
+					['3', 'C'],
+					['4', 'D'],
+				];
+				let config: TableUserConfig = {
+					...tableConfig,
+					header: {
+						content: '*Please select the section*\n',
+						wrapWord: true,
+						alignment: 'left',
+					},
+				};
+				let msg = tableData(data, config);
+
+				await client.sendMessage(message.from, msg);
 				client.removeListener('message', eventHandler5);
 
 				client.on('message', finalHandler);
 			};
 			const finalHandler = async (message: WAWebJS.Message) => {
-				if (message.selectedRowId) userObj.section = message.selectedRowId;
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				switch (message.body) {
+					case '1':
+						userObj['section'] = 'a';
+						break;
+					case '2':
+						userObj['section'] = 'b';
+						break;
+					case '3':
+						userObj['section'] = 'c';
+						break;
+					case '4':
+						userObj['section'] = 'd';
+					default:
+						client.sendMessage(message.from, 'Option invalid');
+						//client.removeListener('message',eventHandler2)
+						break;
+				}
+				//	if (message.selectedRowId) userObj.section = message.selectedRowId;
 				await db.collection<student>(collection.student).insertOne(userObj);
 				await client.sendMessage(message.from, 'User created successfully');
 				client.removeListener('message', finalHandler);

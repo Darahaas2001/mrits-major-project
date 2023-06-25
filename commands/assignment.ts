@@ -1,6 +1,8 @@
-import WAWebJS, { List } from 'whatsapp-web.js';
+import WAWebJS from 'whatsapp-web.js';
 import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
+import { tableConfig, tableData } from '../utils/table';
+import { TableUserConfig } from 'table';
 import {
 	faculty,
 	student,
@@ -10,7 +12,7 @@ import {
 } from '../Models/models';
 import { collection } from '../utils/collection';
 import moment from 'moment';
-import { writeFileSync } from 'fs';
+
 import { ObjectId } from 'mongodb';
 
 export default {
@@ -25,28 +27,48 @@ export default {
 		args: string[]
 	) => {
 		try {
-			let listSpec = [
-				{
-					title: 'Select an option',
-					rows: [
-						{ id: 'list', title: 'List assignments' },
-						{ id: 'submit', title: 'Submit assignment' },
-						{
-							id: 'listsubmit',
-							title:
-								'List of students who submitted the assignment (faculty only)',
-						},
-					],
-				},
+			let globalMaps: any = {};
+			let usrObj: any = { author: message.author };
+			let data = [
+				['1', 'List Assignments'],
+				['2', 'Submit Assignments'],
+				['3', 'List of Submitted Students'],
 			];
-			let list = new List('Select an option', 'next', listSpec);
-			client.sendMessage(message.from, list);
+
+			// let listSpec = [
+			// 	{
+			// 		title: 'Select an option',
+			// 		rows: [
+			// 			{ id: 'list', title: 'List assignments' },
+			// 			{ id: 'submit', title: 'Submit assignment' },
+			// 			{
+			// 				id: 'listsubmit',
+			// 				title:
+			// 					'List of students who submitted the assignment (faculty only)',
+			// 			},
+			// 		],
+			// 	},
+			// ];
+			let config: TableUserConfig = {
+				...tableConfig,
+				header: {
+					content: '*Please select an option*\n',
+					wrapWord: true,
+					alignment: 'left',
+				},
+			};
+			let msg = tableData(data, config);
+
+			await client.sendMessage(message.from, msg);
+			//	let list = new List('Select an option', 'next', listSpec);
+			//	client.sendMessage(message.from, list);
 			let dataObj: Partial<subAssignment> = {};
 
 			const eventHandler1 = async (message: WAWebJS.Message) => {
-				if (!message.selectedRowId)
-					client.removeListener('message', eventHandler1);
-				if (message.selectedRowId === 'list') {
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+
+				if (message.body === '1') {
 					let studentData = await db
 						.collection<student>(collection.student)
 						.findOne({ mobileNo: (message.author as string).split('@')[0] });
@@ -117,17 +139,17 @@ export default {
 
 						await client.sendMessage(message.from, activeAssignment);
 					}
-				} else if (message.selectedRowId === 'submit') {
+				} else if (message.body === '2') {
 					let userData = await db
 						.collection<student>(collection.student)
 						.findOne({ mobileNo: (message.author as string).split('@')[0] });
 					if (userData) {
-						let listSpec = [
-							{
-								title: 'Select the assignment you want to submit',
-								rows: <any>[],
-							},
-						];
+						// let listSpec = [
+						// 	{
+						// 		title: 'Select the assignment you want to submit',
+						// 		rows: <any>[],
+						// 	},
+						// ];
 						let assignmentData = await db
 							.collection<assignment>(collection.assignment)
 							.findOne({
@@ -138,45 +160,74 @@ export default {
 							});
 
 						if (assignmentData) {
+							let data = [];
 							for (const asgnmt of assignmentData?.assignment) {
 								let difference = moment(asgnmt.deadLine).diff(
 									moment(Date.now()),
 									'days'
 								);
 
-								if (difference >= 1) {
+								if (difference >= 0) {
 									let subData = await db
 										.collection<subject>(collection.subject)
 										.findOne({ subjectCode: asgnmt.subjectCode });
 									if (subData) {
-										listSpec[0].rows.push({
-											id: subData.subjectCode,
-											title: subData.subjectName,
-										});
+										let i = 1;
+										data.push([`${i}`, subData.subjectName]);
+										// listSpec[0].rows.push({
+										// 	id: subData.subjectCode,
+										// 	title: subData.subjectName,
+										// });
+
+										globalMaps[`${i}`] = subData.subjectCode;
+										i++;
 									}
 								}
 							}
-							let list = new List(
-								'Select the assignment you want to submit',
-								'next',
-								listSpec
-							);
-							await client.sendMessage(message.from, list);
+							// let list = new List(
+							// 	'Select the assignment you want to submit',
+							// 	'next',
+							// 	listSpec
+							// );
+							//await client.sendMessage(message.from, list);
+							//	console.log(data);
+							let config: TableUserConfig = {
+								...tableConfig,
+								header: {
+									content: '*Please select the assignment to submit*\n',
+									wrapWord: true,
+									alignment: 'left',
+								},
+							};
+							let msg = tableData(data, config);
+
+							await client.sendMessage(message.from, msg);
 							client.removeListener('message', eventHandler1);
 							client.on('message', subjectHandler);
 						}
 					}
-				} else if (message.selectedRowId === 'listsubmit') {
+				} else if (message.body === '3') {
 					let userData = await db
 						.collection<faculty>(collection.faculty)
 						.findOne({ mobileNo: (message.author as string).split('@')[0] });
 					if (userData) {
-						let listSpec = [
-							{
-								title: 'Select the assignment you list',
-								rows: <any>[],
+						let data = [];
+
+						let config: TableUserConfig = {
+							...tableConfig,
+							header: {
+								content: '*Please select the assignment to list*\n',
+								wrapWord: true,
+								alignment: 'left',
 							},
-						];
+						};
+
+						// let listSpec = [
+						// 	{
+						// 		title: 'Select the assignment you list',
+						// 		rows: <any>[],
+						// 	},
+						// ];
 						for (const subject of userData.teachingSubjects) {
 							let assignmentData = await db
 								.collection<assignment>(collection.assignment)
@@ -191,19 +242,26 @@ export default {
 								let subjectData = await db
 									.collection<subject>(collection.subject)
 									.findOne({ subjectCode: requiredAssignment?.subjectCode });
-								listSpec[0].rows.push({
-									id: requiredAssignment?.subjectCode,
-									title: subjectData?.subjectName,
-								});
+								let i = 1;
+								data.push([
+									// id: requiredAssignment?.subjectCode,
+									`${i}`,
+									subjectData?.subjectName as string,
+								]);
+								globalMaps[`${i}`] = requiredAssignment?.subjectCode;
+								i++;
 							}
 						}
-						let list = new List(
-							'Select the assignment you list',
-							'next',
-							listSpec
-						);
+						// let list = new List(
+						// 	'Select the assignment you list',
+						// 	'next',
+						// 	listSpec
+						// );
 
-						await client.sendMessage(message.from, list);
+						//await client.sendMessage(message.from, list);
+						let msg = tableData(data as string[][], config);
+
+						await client.sendMessage(message.from, msg);
 						client.removeListener('message', eventHandler1);
 						client.on('message', listStudentHandler);
 						// client.sendMessage(message.from,msgData)
@@ -215,19 +273,29 @@ export default {
 			};
 
 			const listStudentHandler = async (message: WAWebJS.Message) => {
-				if (!message.selectedRowId) {
-					client.removeListener('message', listStudentHandler);
-				}
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				if (!globalMaps[message.body])
+					return client.sendMessage(message.from, 'Invalid option selected');
 				let msgData = '*List of students submitted*';
 				let assignmentData = await db
 					.collection<assignment>(collection.assignment)
-					.findOne({ 'assignment.subjectCode': message.selectedRowId });
+					.findOne({ 'assignment.subjectCode': globalMaps[message.body] });
 				if (assignmentData) {
 					let requiredAssignment = assignmentData.assignment
 						.filter(
-							(assignment) => assignment.subjectCode === message.selectedRowId
+							(assignment) =>
+								assignment.subjectCode === globalMaps[message.body]
 						)
 						.pop();
+					if (!requiredAssignment?.submittedStudents) {
+						client.removeListener('message', listStudentHandler);
+						return client.sendMessage(
+							message.from,
+							'No student have submitted yet'
+						);
+					}
+
 					for (const students of requiredAssignment?.submittedStudents!) {
 						let studentData = await db
 							.collection<student>(collection.student)
@@ -241,13 +309,17 @@ export default {
 				}
 			};
 			const subjectHandler = async (message: WAWebJS.Message) => {
-				if (!message.selectedRowId)
-					client.removeListener('message', subjectHandler);
+				// if (!message.selectedRowId)
+				// 	client.removeListener('message', subjectHandler);
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
+				if (!globalMaps[message.body])
+					return client.sendMessage(message.from, 'Wrong option selected');
 				let userData = await db
 					.collection<student>(collection.student)
 					.findOne({ mobileNo: (message.author as string).split('@')[0] });
 				if (userData) {
-					dataObj.subjectCode = message.selectedRowId;
+					dataObj.subjectCode = globalMaps[message.body];
 					dataObj.submittedStudents = [];
 					dataObj.submittedStudents.push({
 						studentId: userData._id,
@@ -268,6 +340,8 @@ export default {
 				client.removeListener('message', subjectHandler);
 			};
 			const mediaUploadHandler = async (message: WAWebJS.Message) => {
+				let usrData = { ...usrObj };
+				if (!(message.author === usrData.author)) return;
 				if (!message.hasMedia) {
 					client.sendMessage(message.from, 'Please upload only media files');
 					setTimeout(() => {

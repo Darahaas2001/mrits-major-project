@@ -1,8 +1,8 @@
-import WAWebJS, { MessageMedia } from 'whatsapp-web.js';
+import WAWebJS from 'whatsapp-web.js';
 import { fail } from '../utils/chalk';
 import { db } from '../utils/db';
 import { collection } from '../utils/collection';
-import { student, faculty } from '../Models/models';
+import { student } from '../Models/models';
 export default {
 	name: 'profile',
 	type: 'user',

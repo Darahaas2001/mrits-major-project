@@ -1,6 +1,5 @@
 import WAWebJS from 'whatsapp-web.js';
 import { fail } from '../utils/chalk';
-import { Buttons } from 'whatsapp-web.js';
 
 export default {
 	name: 'about',

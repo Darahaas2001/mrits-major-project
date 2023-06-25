@@ -1,8 +1,7 @@
-import WAWebJS, { Buttons, List } from 'whatsapp-web.js';
+import WAWebJS from 'whatsapp-web.js';
 import { fail } from '../utils/chalk';
-import { tableData } from '../utils/table';
-import { TableUserConfig, getBorderCharacters } from 'table';
-import { messageListener } from '../utils/messageListener';
+import { tableConfig, tableData } from '../utils/table';
+import { TableUserConfig } from 'table';
 
 export default {
 	name: 'material',
@@ -22,18 +21,7 @@ export default {
 				['3', 'ECE'],
 			];
 			let config: TableUserConfig = {
-				drawVerticalLine: (lineIndex, columnCount) => {
-					return lineIndex === 1;
-				},
-				drawHorizontalLine: () => {
-					return false;
-				},
-				columnDefault: {
-					width: 30,
-					paddingLeft: 1,
-					paddingRight: 5,
-				},
-				columns: [{ width: 1, paddingLeft: 1, paddingRight: 2 }],
+				...tableConfig,
 				header: {
 					content: '*Please select the branch*\n',
 					wrapWord: true,
