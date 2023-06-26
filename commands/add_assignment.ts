@@ -20,7 +20,7 @@ export default {
 	description: 'Creates a new assignment for students',
 	usage:
 		//'!add_assignment ||<branch>||<year>||<semester>||<section>||<subject name>||<assignment no>||<deadline>||<description>\n\t Ex: !add_assignment ||IT||4||1||A||RS&GIS||1||10-10-2022||Remote Sensing assignment 1',
-		'!add_assignment\n\tAdmin needs to select(or)enter the necessary information as instructed. \n\t1.Select your subject of teaching\n\t2.Please enter the assignment deadline in dd/mm/yyyy\n\t3.Enter the assignment description\n\t4.Finally, you are prompted with the message -\n\t  "Assignment has been added successfully"',
+		'!add_assignment\n\tAdmin needs to select(or)enter the necessary information as instructed. \n\t1.Enter the selection number associated with the _*subject of teaching*_.\n\t2.Please enter the _*assignment deadline*_ in dd/mm/yyyy\n\t3.Enter the _*assignment description*_\n\t4.Finally, you are prompted with the message -\n\t  "Assignment has been added successfully"',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,
@@ -157,7 +157,7 @@ export default {
 					}
 					client.sendMessage(
 						message.from,
-						'Assignment has been added successfully'
+						'Assignment has been added successfully.'
 					);
 				};
 				client.on('message', eventHandler1);
@@ -167,7 +167,7 @@ export default {
 			client.sendMessage(message.from, `${err}`);
 			client.sendMessage(
 				message.from,
-				'Error occured, please contact developer'
+				'Error occured, please contact Developer.'
 			);
 		}
 	},

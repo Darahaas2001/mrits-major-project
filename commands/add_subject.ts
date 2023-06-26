@@ -12,7 +12,7 @@ export default {
 	type: 'admin',
 	description: 'Creates new subject',
 	usage:
-		'!add_subject\n\tAdmin needs to select(or)enter the necessary information as instructed. \n\t1.Select the Branch\n\t2.Select the Regulation\n\t3.Select the Year\n\t4.Select the Semester\n\t5.Please enter the subject code as per JNTU-H\n\t6.Please enter the subject name as per JNTU-H\n\t7.Finally, you are prompted with the message -\n\t  "Subject has been added successfully."',
+		'!add_subject\n\tAdmin needs to select(or)enter the necessary information as instructed.\n\t1.Select the _*Branch*_ by entering the appropriate selection number.\n\t2.Select the _*Regulation*_ by entering the appropriate selection number.\n\t3.Select the _*Year of Study*_ by entering the appropriate selection number.\n\t4.Select the _*Semester*_ by entering the appropriate selection number.\n\t5.Please enter the _*subject code*_ as per JNTU-H.\n\t6.Please enter the _*subject name*_ as per JNTU-H.\n\t7.Finally, you are prompted with the message -\n\t  "Subject has been added successfully."',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,

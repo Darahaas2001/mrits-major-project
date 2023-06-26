@@ -7,7 +7,7 @@ export default {
 	name: 'material',
 	type: 'user',
 	description: 'Study material for the students',
-	usage: '!material',
+	usage: '!material\n\t1.Enter the appropriate selection number to select the branch.\n\t2. In the next step, material link is provided.',
 	exec: async (
 		client: WAWebJS.Client,
 		message: WAWebJS.Message,

@@ -131,7 +131,7 @@ export default {
 
 									activeAssignment += `\n ${subData?.subjectName} (${moment(
 										asgnmt.deadLine
-									).format('dddd-MMM-YYYY')})`;
+									).format('DD-MMM-YYYY')})`;
 								}
 							}
 						}
