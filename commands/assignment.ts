@@ -161,6 +161,7 @@ export default {
 
 						if (assignmentData) {
 							let data = [];
+							let i = 1;
 							for (const asgnmt of assignmentData?.assignment) {
 								let difference = moment(asgnmt.deadLine).diff(
 									moment(Date.now()),
@@ -172,7 +173,6 @@ export default {
 										.collection<subject>(collection.subject)
 										.findOne({ subjectCode: asgnmt.subjectCode });
 									if (subData) {
-										let i = 1;
 										data.push([`${i}`, subData.subjectName]);
 										// listSpec[0].rows.push({
 										// 	id: subData.subjectCode,
